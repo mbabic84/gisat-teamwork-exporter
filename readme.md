@@ -1,6 +1,6 @@
 Prepare: npm i
 
-Run: node index.mjs <apiKey> [number of month 1-12]
+Run: node index.mjs <apiKey> [number of month 1-12] [year]
 
 You can get your apiKey here: TeamWork -> User -> Edit my details -> Api & Mobile
 

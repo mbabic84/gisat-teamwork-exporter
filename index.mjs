@@ -20,16 +20,23 @@ function getUserId({ userDetails }) {
     return userDetails.person.id;
 }
 
-function getTimeInterval({month}) {
+function getTimeInterval({ month, year }) {
+    let intervalMoment;
+    if (year) {
+        intervalMoment = moment().year(year);
+    } else {
+        intervalMoment = moment();
+    }
+
     if (month) {
         return {
-            from: moment().month(Number(month)-1).startOf("month").format("YYYYMMDD"),
-            to: moment().month(Number(month)-1).endOf("month").format("YYYYMMDD")
+            from: intervalMoment.month(Number(month) - 1).startOf("month").format("YYYYMMDD"),
+            to: intervalMoment.month(Number(month) - 1).endOf("month").format("YYYYMMDD")
         }
     } else {
         return {
-            from: moment().subtract(1, "month").startOf("month").format("YYYYMMDD"),
-            to: moment().subtract(1, "month").endOf("month").format("YYYYMMDD")
+            from: intervalMoment.subtract(1, "month").startOf("month").format("YYYYMMDD"),
+            to: intervalMoment.subtract(1, "month").endOf("month").format("YYYYMMDD")
         }
     }
 }
@@ -140,10 +147,10 @@ async function exportTotals({ timeInterval, totals }) {
     console.log(totalsStr);
 }
 
-async function run({ apiKey, month }) {
+async function run({ apiKey, month, year }) {
     const userDetails = await getUserDetails({ apiKey });
     const userId = getUserId({ userDetails });
-    const timeInterval = getTimeInterval({month});
+    const timeInterval = getTimeInterval({ month, year });
     const loggedTime = await getLoggedTime({ apiKey, userId, timeInterval });
     const totals = await getTotals({ loggedTime, timeInterval });
 
@@ -152,9 +159,9 @@ async function run({ apiKey, month }) {
 
 async function init() {
     try {
-        const [apiKey, month] = process.argv.slice(2);
+        const [apiKey, month, year] = process.argv.slice(2);
         if (apiKey) {
-            await run({ apiKey, month });
+            await run({ apiKey, month, year });
         } else {
             throw new Error(`Missing API Key!`);
         }
